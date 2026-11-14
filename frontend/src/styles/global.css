@@ -31,5 +31,26 @@ body { margin: 0; background: #f6f8fb; color: #1f2937; }
 .btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
 .btn.ghost { background: transparent; }
 .link { border: none; background: none; color: var(--brand); cursor: pointer; padding: 0; }
-.page-foot { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--muted); }
+.page-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; font-size: 12px; color: var(--muted); }
 .error-text { color: #b42318; }
+.info-text { color: #067647; }
+.muted-text { color: var(--muted); font-size: 12px; }
+.filter-item select { padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff; }
+.modal-mask { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.modal { width: 640px; max-width: calc(100vw - 32px); max-height: calc(100vh - 64px); overflow: auto; background: #fff; border-radius: 10px; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.24); }
+.modal-head { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+.modal-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+.modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--border); }
+.modal-field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+.modal-field input, .modal-field textarea { padding: 7px 9px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; color: #1f2937; }
+.required-mark { color: #b42318; font-style: normal; margin-left: 2px; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin: 0; }
+.detail-item { display: flex; flex-direction: column; gap: 2px; }
+.detail-item dt { font-size: 12px; color: var(--muted); }
+.detail-item dd { margin: 0; font-size: 13px; word-break: break-all; }
+.trail-title { margin: 8px 0 4px; font-size: 13px; }
+.trail-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.trail-item { font-size: 13px; display: flex; gap: 10px; flex-wrap: wrap; }
+.trail-time { color: var(--muted); font-variant-numeric: tabular-nums; }
+.trail-action { color: var(--brand); font-weight: 600; }
+.trail-flow { color: #334155; }

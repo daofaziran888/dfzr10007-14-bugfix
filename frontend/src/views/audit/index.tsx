@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { request } from '@/api/client'
 
@@ -44,13 +44,19 @@ export default function AuditView() {
   const [total, setTotal] = useState(0)
   const [errorMessage, setErrorMessage] = useState('')
   const [filters, setFilters] = useState<Record<string, string>>({})
-  const filterFields = useMemo(() => columns.slice(0, 3), [])
 
   const reload = useCallback(async () => {
     setErrorMessage('')
-    const query = new URLSearchParams(filters).toString()
+    const params = new URLSearchParams()
+    // 后端只支持 keyword（匹配记录编号/查询语句）与 status 两个过滤参数。
+    if (filters.keyword) {
+      params.set('keyword', filters.keyword)
+    }
+    if (filters.status) {
+      params.set('status', filters.status)
+    }
     try {
-      const response = await request(`${ENDPOINT}?${query}`)
+      const response = await request(`${ENDPOINT}?${params.toString()}`)
       if (!response.ok) {
         throw new Error('审计记录列表读取失败')
       }
@@ -69,12 +75,15 @@ export default function AuditView() {
   async function runAction(action: string, row: Row) {
     setErrorMessage('')
     try {
+      // 后端动作契约是 { values: { action } }。
       const response = await request(`${ENDPOINT}/${row.id}/actions`, {
         method: 'POST',
-        body: JSON.stringify({ action }),
+        body: JSON.stringify({ values: { action } }),
       })
-      if (!response.ok) {
-        throw new Error('查询审计日志动作未生效，请稍后重试')
+      const payload = await response.json()
+      if (!response.ok || !payload.ok) {
+        setErrorMessage(payload.message || '查询审计日志动作未生效，请稍后重试')
+        return
       }
       await reload()
     } catch (error) {
@@ -109,16 +118,24 @@ export default function AuditView() {
       </div>
 
       <form className="filter-bar" onSubmit={(event) => { event.preventDefault(); void reload() }}>
-        {filterFields.map((field) => (
-          <label key={field} className="filter-item">
-            <span>{field}</span>
-            <input
-              value={filters[field] ?? ''}
-              placeholder={`按${field}检索`}
-              onChange={(event) => setFilters((prev) => ({ ...prev, [field]: event.target.value }))}
-            />
-          </label>
-        ))}
+        <label className="filter-item">
+          <span>关键字</span>
+          <input
+            value={filters.keyword ?? ''}
+            placeholder="按记录编号 / 查询语句检索"
+            onChange={(event) => setFilters((prev) => ({ ...prev, keyword: event.target.value }))}
+          />
+        </label>
+        <label className="filter-item">
+          <span>复核状态</span>
+          <select
+            value={filters.status ?? ''}
+            onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value }))}
+          >
+            <option value="">全部状态</option>
+            {statuses.map((status) => <option key={status} value={status}>{status}</option>)}
+          </select>
+        </label>
         <button className="btn" type="submit">查询</button>
         <button className="btn ghost" type="button" onClick={() => setFilters({})}>重置条件</button>
       </form>

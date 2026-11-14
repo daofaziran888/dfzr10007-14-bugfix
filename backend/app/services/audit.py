@@ -23,7 +23,13 @@ class AuditService:
     ) -> tuple[list[dict[str, Any]], int]:
         rows = store.rows(MODULE)
         if keyword:
-            rows = [row for row in rows if keyword in str(row.get("记录编号", ""))]
+            # 优化建议按目标查询核对审计日志，因此关键字同时匹配记录编号与查询语句。
+            rows = [
+                row
+                for row in rows
+                if keyword in str(row.get("记录编号", ""))
+                or keyword in str(row.get("查询语句", ""))
+            ]
         if status:
             rows = [row for row in rows if row.get("status") == status]
         total = len(rows)
